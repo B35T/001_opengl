@@ -21,9 +21,9 @@ class Square {
 
     private val vertexShaderCode =
             "attribute vec4 vPosition;" +
-            "void main() {" +
-            "  gl_Position = vPosition;" +
-            "}"
+                    "void main() {" +
+                    "  gl_Position = vPosition;" +
+                    "}"
 
     private val fragmentShaderCode =
             "precision mediump float;" +
@@ -112,4 +112,3 @@ class Square {
         }
     }
 }
-

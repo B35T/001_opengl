@@ -1,8 +1,9 @@
 package com.charoemphong.a001_opengl
 
+import android.graphics.BitmapFactory
 import android.opengl.GLSurfaceView
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.charoemphong.a001_opengl.libs.MyGLSurfaceView
 
 class MainActivity : AppCompatActivity() {
@@ -12,7 +13,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        gLView = MyGLSurfaceView(this)
+        val photo = BitmapFactory.decodeResource(this.resources, R.drawable.img0)
+
+
+        gLView = MyGLSurfaceView(this,photo)
         setContentView(gLView)
     }
 }
+
