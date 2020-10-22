@@ -3,22 +3,21 @@ package com.charoemphong.a001_opengl.libs
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.media.effect.Effect
-import android.media.effect.EffectContext
-import android.media.effect.EffectFactory
 import android.opengl.GLES20
 import android.opengl.GLES31
 import android.opengl.GLSurfaceView
 import android.opengl.GLUtils
-import android.util.Log
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 
 class MyGLSurfaceView(context: Context, texture: Bitmap) : GLSurfaceView(context) {
-    private val renderer : MyGLRenderer2
-
+    private var renderer : MyGLRenderer2
     private var photo: Bitmap = texture
+
+    fun change(v: Float) {
+        renderer.setValue(v)
+    }
 
     init {
         setEGLContextClientVersion(2)
@@ -34,6 +33,12 @@ class MyGLSurfaceView(context: Context, texture: Bitmap) : GLSurfaceView(context
 class MyGLRenderer2(var photo: Bitmap) : GLSurfaceView.Renderer {
     private lateinit var square: Square2
     private val textures = IntArray(2)
+    private var value: Float = 360.0f
+
+    fun setValue(v : Float) {
+        value = v
+    }
+
 
     fun generateSquare() {
         GLES31.glGenTextures(2, textures, 0);
@@ -46,6 +51,7 @@ class MyGLRenderer2(var photo: Bitmap) : GLSurfaceView.Renderer {
 
         GLUtils.texImage2D(GLES31.GL_TEXTURE_2D, 0, photo, 0);
 //
+        photo.recycle()
         square = Square2()
     }
 
@@ -56,11 +62,11 @@ class MyGLRenderer2(var photo: Bitmap) : GLSurfaceView.Renderer {
 
     override fun onDrawFrame(gl: GL10?) {
         GLES31.glClear(GLES31.GL_COLOR_BUFFER_BIT)
-        square.draw(textures[0])
+        square.draw(textures[0], value)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-        GLES31.glViewport(0, 0,width, height);
+        GLES31.glViewport(0, 0, width, height);
         GLES31.glClearColor(0f, 0f, 0f, 1f);
         generateSquare()
     }

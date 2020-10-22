@@ -17,17 +17,16 @@ private val textureVertices = floatArrayOf(
         0f, 0f,
         1f, 0f
 )
-class Square2 {
+class Square2() {
 
 
-    private val vertexShaderCode =
+    private val vertexShaderCode = "uniform float valueD;"+
             "attribute vec4 aPosition;" +
             "attribute vec2 aTexPosition;" +
             "varying vec2 vTexPosition;" +
             "void main() {" +
                     "  gl_Position = aPosition;" +
             "  vTexPosition = aTexPosition;" +
-
             "}"
 
     //luminance
@@ -47,11 +46,12 @@ class Square2 {
 
     //twirl_fragment_shader
     var fragmentShaderCode = "precision mediump float;"+
+            "uniform float valueD;"+
             "uniform sampler2D uTexture;"+
             "varying vec2 vTexPosition;" +
             "void main() {" +
             "float Res = 720.0;" +
-            "float D = -190.0;" +
+            "float D = valueD;"+
             "float R = 0.3;" +
             "vec2 st = vTexPosition.st;" +
             "float Radius = Res * R;" +
@@ -92,6 +92,7 @@ class Square2 {
     private var positionHandle: Int = 0
     private var textureHandle : Int = 0
     private var texturePositionHandle : Int = 0
+    private var valueHandle : Int = 0
 
     init {
         val vertexShader = loadShader(GLES31.GL_VERTEX_SHADER, vertexShaderCode)
@@ -104,13 +105,14 @@ class Square2 {
         }
     }
 
-    fun draw(texture: Int) {
+    fun draw(texture: Int, value: Float) {
         GLES31.glBindFramebuffer(GLES31.GL_FRAMEBUFFER, 0)
         GLES31.glUseProgram(program)
         GLES31.glDisable(GLES31.GL_BLEND)
 
         positionHandle = GLES31.glGetAttribLocation(program, "aPosition")
         textureHandle = GLES31.glGetUniformLocation(program, "uTexture")
+        valueHandle = GLES31.glGetUniformLocation(program, "valueD")
         texturePositionHandle = GLES31.glGetAttribLocation(program, "aTexPosition")
 
         GLES31.glEnableVertexAttribArray(texturePositionHandle)
@@ -118,7 +120,9 @@ class Square2 {
 
         GLES31.glActiveTexture(GLES31.GL_TEXTURE0)
         GLES31.glBindTexture(GLES31.GL_TEXTURE_2D, texture)
-        GLES31.glUniform1i(textureHandle,0)
+        GLES31.glUniform1i(textureHandle,0)  //0
+
+        GLES31.glUniform1f(valueHandle, value)
 
         GLES31.glVertexAttribPointer(positionHandle, 2, GLES31.GL_FLOAT, false, 0, verticesBuffer)
         GLES31.glEnableVertexAttribArray(positionHandle)
