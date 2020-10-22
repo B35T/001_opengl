@@ -5,27 +5,29 @@ import android.graphics.BitmapFactory
 import android.opengl.GLSurfaceView
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.charoemphong.a001_opengl.glllb.GLlllbView
 import com.charoemphong.a001_opengl.libs.MyGLSurfaceView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    var value = 200.0f
-    private lateinit var gLView: GLSurfaceView
-    private lateinit var mGLSurfaceView: MyGLSurfaceView
+    var value = 0.0f
+    private lateinit var mGLSurfaceView: GLlllbView
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val photo = BitmapFactory.decodeResource(this.resources, R.drawable.img0).resizeByWidth(750)
+        val photo = BitmapFactory.decodeResource(this.resources, R.drawable.img0)
+        Log.d("IMAGE_SIZE", "${photo.width}, ${photo.height}")
 
-        mGLSurfaceView = MyGLSurfaceView(this, photo)
+        mGLSurfaceView = GLlllbView(this, photo)
         mGLSurfaceView.change(value)
         val frame = findViewById<FrameLayout>(R.id.frameLayout)
         frame.addView(mGLSurfaceView)
@@ -68,14 +70,14 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    override fun onPause() {
-        super.onPause()
-        mGLSurfaceView.onPause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mGLSurfaceView.onResume()
-    }
+//    override fun onPause() {
+//        super.onPause()
+//        mGLSurfaceView.onPause()
+//    }
+//
+//    override fun onResume() {
+//        super.onResume()
+//        mGLSurfaceView.onResume()
+//    }
 }
 
