@@ -1,9 +1,19 @@
 package com.charoemphong.a001_opengl.glllb.flitter
 
+import android.graphics.Bitmap
+import android.opengl.GLES20
 import android.opengl.GLES31
+import android.os.Environment
+import android.util.Log
+import com.charoemphong.a001_opengl.BuildConfig
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
+import java.nio.IntBuffer
+import java.util.*
 
 private val vertices = floatArrayOf(
         -1f, -1f,
@@ -17,9 +27,10 @@ private val textureVertices = floatArrayOf(
         0f, 0f,
         1f, 0f
 )
+
 class Twirl() {
-
-
+    var width = 0
+    var height = 0
     private val vertexShaderCode = "uniform float valueD;"+
             "attribute vec4 aPosition;" +
             "attribute vec2 aTexPosition;" +
@@ -136,5 +147,13 @@ class Twirl() {
             GLES31.glShaderSource(shader, shaderCode)
             GLES31.glCompileShader(shader)
         }
+    }
+
+    fun toBitmap(): Bitmap? {
+        val buffer = ByteBuffer.allocate(width * height * 4)
+        GLES31.glReadPixels(0, 0, width, height, GLES31.GL_RGBA, GLES31.GL_UNSIGNED_BYTE, buffer)
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        bitmap.copyPixelsFromBuffer(buffer)
+        return bitmap
     }
 }
