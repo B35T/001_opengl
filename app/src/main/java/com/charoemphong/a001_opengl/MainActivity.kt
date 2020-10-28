@@ -1,18 +1,16 @@
 package com.charoemphong.a001_opengl
 
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.opengl.GLSurfaceView
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Size
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -21,10 +19,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.charoemphong.a001_opengl.glllb.GLlllbRenderer
 import com.charoemphong.a001_opengl.glllb.GLlllbView
-import com.charoemphong.a001_opengl.glllb.create.create
 import com.charoemphong.a001_opengl.glllb.offscreen.GLConfigChooser
 import com.charoemphong.a001_opengl.glllb.offscreen.GLContextFactory
-import com.charoemphong.a001_opengl.glllb.offscreen.GLRenderer
 import com.charoemphong.a001_opengl.glllb.offscreen.PixelBuffer
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -91,8 +87,13 @@ class MainActivity : AppCompatActivity() {
 
         val fab: View = findViewById(R.id.fab)
         fab.setOnClickListener { view ->
-            pixelBuffer = PixelBuffer(1080, 1080, GLContextFactory(), GLConfigChooser(8,8,8,8,0,0))
-            pixelBuffer.setRenderer(GLlllbRenderer(photo))
+            Log.d("SizeScreen", "${Size(photo.width, photo.height)}")
+            val w = photo.width
+            val h = photo.height
+            val r = GLlllbRenderer(photo)
+            r.setValue(value)
+            pixelBuffer = PixelBuffer(w, h, GLContextFactory(), GLConfigChooser(8,8,8,8,0,0))
+            pixelBuffer.setRenderer(r)
             val bitmap : Bitmap? = pixelBuffer.getBitmap()
 
             if (bitmap != null) {
@@ -100,10 +101,10 @@ class MainActivity : AppCompatActivity() {
                     val filepath = Environment.DIRECTORY_DCIM
 
                     // Create a file to save the image
-                    val file = File("/storage/emulated/0/$filepath", "gl_${UUID.randomUUID()}.jpg")
+                    val file = File("/storage/emulated/0/$filepath", "gl_${value}_${UUID.randomUUID()}.jpg")
 
                     val fos = FileOutputStream(file)
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
                     Log.d("Ragnarok", "successfully store bitmap")
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()
@@ -134,5 +135,18 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         mGLSurfaceView.onResume()
     }
+
+
+    fun screenCalculate(ph:Bitmap) :Size {
+        val s = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(s)
+        Log.d("SizeScreen", "${s.widthPixels}, ${s.heightPixels}")
+        val c = ph.height / ph.width.toFloat()
+
+        val h = s.widthPixels.toFloat() * c
+        Log.d("SizeScreen", "${s.widthPixels}, ${h.toInt()}")
+        return Size(s.widthPixels,h.toInt())
+    }
 }
+
 

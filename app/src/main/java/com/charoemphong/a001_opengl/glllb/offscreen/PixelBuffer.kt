@@ -2,7 +2,9 @@ package com.charoemphong.a001_opengl.glllb.offscreen
 
 import android.graphics.Bitmap
 import android.opengl.GLSurfaceView
+import android.opengl.Matrix
 import android.util.Log
+import androidx.core.graphics.rotationMatrix
 import java.nio.IntBuffer
 import javax.microedition.khronos.egl.*
 import javax.microedition.khronos.opengles.GL10
@@ -14,12 +16,12 @@ class PixelBuffer(var width: Int, var height: Int, contextFactory: GLContextFact
 
     private lateinit var mRenderer: GLSurfaceView.Renderer
 
-    private lateinit var mEgl : EGL10
-    private lateinit var mEGLConfig :EGLConfig
-    private lateinit var mEglDisplay: EGLDisplay
-    private lateinit var mEglContext :EGLContext
-    private lateinit var mEglSurface :EGLSurface
-    private lateinit var mGL:GL10
+    private var mEgl : EGL10
+    private var mEGLConfig :EGLConfig
+    private var mEglDisplay: EGLDisplay
+    private var mEglContext :EGLContext
+    private var mEglSurface :EGLSurface
+    private var mGL:GL10
 
     var mThreadOwner: String? = null
     init {
@@ -94,20 +96,20 @@ class PixelBuffer(var width: Int, var height: Int, contextFactory: GLContextFact
 
     private fun convertToBitmap() {
         val startTime = System.currentTimeMillis()
-        val iat = IntArray(width * height)
         val ib: IntBuffer = IntBuffer.allocate(width * height)
         mGL.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, ib)
-        val ia: IntArray = ib.array()
 
-//         Convert upside down mirror-reversed image to right-side up normal image.
-        for (i in 0 until width) {
-            for (j in 0 until height) {
-                iat[(width - i - 1) * height + j] = ia[i * width + j]
-            }
-        }
+        // create Bitmap and copied buffer
         mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        //        GL2JNILib.readPixelIntoBitmap(mBitmap);
-        mBitmap!!.copyPixelsFromBuffer(IntBuffer.wrap(iat))
+        mBitmap!!.copyPixelsFromBuffer(ib)
+
+        //Rotation and Flip
+        val matrix = android.graphics.Matrix()
+        matrix.postRotate(180f)
+        matrix.postScale(-1.0f, 1.0f)
+
+        mBitmap = Bitmap.createBitmap(mBitmap!!, 0,0,width,height,matrix,false)
+
         val endTime = System.currentTimeMillis()
         Log.d("TAG", "convertToBitmap used " + (endTime - startTime))
     }
