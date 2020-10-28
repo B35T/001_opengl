@@ -3,18 +3,22 @@ package com.charoemphong.a001_opengl
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.media.Image
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.text.Layout
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Size
+import android.view.Gravity
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.SeekBar
-import android.widget.Toast
+import android.view.ViewGroup
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.charoemphong.a001_opengl.glllb.GLlllbRenderer
@@ -53,13 +57,29 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val photo = BitmapFactory.decodeResource(this.resources, R.drawable.img0)
+        val photo = BitmapFactory.decodeResource(this.resources, R.drawable.a)
         Log.d("IMAGE_SIZE", "${photo.width}, ${photo.height}")
+        val s = screenCalculate(photo)
 
         mGLSurfaceView = GLlllbView(this, photo)
         mGLSurfaceView.change(value)
-        val frame = findViewById<FrameLayout>(R.id.frameLayout)
-        frame.addView(mGLSurfaceView)
+
+
+        val lay = findViewById<LinearLayout>(R.id.frameLayout).apply {
+            val s2 = DisplayMetrics()
+            windowManager.defaultDisplay.getMetrics(s2)
+
+            gravity = Gravity.CENTER
+            layoutParams.apply {
+                x = 0f
+                y = ((s2.heightPixels / 2f) - (s.height / 2f)) / 2
+                width = s.width
+                height = s.height
+            }
+        }
+        lay.addView(mGLSurfaceView)
+
+//        setContentView(mGLSurfaceView)
 
         seekBar.min = -360
         seekBar.max = 360

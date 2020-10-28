@@ -61,9 +61,9 @@ class Twirl() {
             "uniform sampler2D uTexture;"+
             "varying vec2 vTexPosition;" +
             "void main() {" +
-            "float Res = 720.0;" +
+            "float Res = 360.0;" +
             "float D = valueD;"+
-            "float R = 0.3;" +
+            "float R = 1.0;" +
             "vec2 st = vTexPosition.st;" +
             "float Radius = Res * R;" +
             "vec2 xy = Res * st;" +

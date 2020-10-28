@@ -2,9 +2,7 @@ package com.charoemphong.a001_opengl.glllb.offscreen
 
 import android.graphics.Bitmap
 import android.opengl.GLSurfaceView
-import android.opengl.Matrix
 import android.util.Log
-import androidx.core.graphics.rotationMatrix
 import java.nio.IntBuffer
 import javax.microedition.khronos.egl.*
 import javax.microedition.khronos.opengles.GL10
